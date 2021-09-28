@@ -1,0 +1,27 @@
+name: deploy
+on:
+  workflow_dispatch:
+    inputs:
+      namespace:
+        description: "The namespace to deploy to"
+        required: true
+        default: "dev"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: helm deploy
+        uses: koslib/helm-eks-action@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
+        with:
+          command: helm repo add bitnami https://charts.bitnami.com/bitnami && helm upgrade --install ghost01 --set ghostUsername=${{ secrets.GHOSTUSERNAME }} --set ghostPassword=${{ secrets.GHOSTPASSWORD }} --set mariadb.auth.rootPassword=${{ secrets.DBPASSWORD }} bitnami/ghost

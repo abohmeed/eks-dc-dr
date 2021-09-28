@@ -1,0 +1,9 @@
+*.terraform*
+*.tfvars
+bin
+out
+.idea
+infrastructure/serverless/zips
+infrastructure/serverless/src/node_modules
+*kubeconfig*
+*tf-plan

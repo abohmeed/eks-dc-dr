@@ -1,0 +1,72 @@
+# Default values for ghost.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+image:
+  repository: ghost
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::youraccount:role/pods3
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "s3sa"
+podAnnotations: {}
+podSecurityContext: {}
+  # fsGroup: 2000
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+service:
+  type: NodePort
+  port: 80
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:eu-west-2:youraccount:certificate/221446b0-bf79-469a-96e0-fd8e75160bed"
+    external-dns.alpha.kubernetes.io/hostname: "ghost.dev.fakharany.com"
+  hosts:
+    - host: "ghost.dev.fakharany.com"
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+resources:
+   limits:
+     cpu: 500m
+     memory: 500Mi
+   requests:
+     cpu: 250m
+     memory: 256Mi
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 90
+nodeSelector: {}
+tolerations: []
+affinity: {}
+# The following values are displayed here for demonstration purposes. When applying the chart, they should be supplied as --set key=value.
+# Please see the README file
+appUrl: https://ghost.dev.fakharany.com

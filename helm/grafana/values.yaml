@@ -1,0 +1,13 @@
+service:
+  type: NodePort
+ingress:
+  enabled: true
+  path: /*
+  hostname: grafana.dev.fakharany.com
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:eu-west-2:your-account:certificate/221446b0-bf79-469a-96e0-fd8e75160bed"
+    external-dns.alpha.kubernetes.io/hostname: grafana.dev.fakharany.com
